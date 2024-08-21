@@ -8,7 +8,7 @@ class AddNote extends Model
 {
 	public $description;
 	public $header;
-	
+	public $tag;
 	public function rules()
 	{
 		return [

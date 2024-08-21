@@ -5,14 +5,14 @@ use yii\base\model;
 
 class SignupForm extends Model
 {
-	public $username;
+	public $name;
 	public $password;
 	
 	
 	public function rules()
 	{
 		return [
-		[['username','password'],'required'],
+		[['name','password'],'required'],
 		['password','validatePassword'],
 		
 		
@@ -30,7 +30,11 @@ class SignupForm extends Model
             }
         }
     }
-	
+	public function signup()
+	{
+		
+		
+	}
 	
 }
 

@@ -137,9 +137,13 @@ a.desc:after {
 {
 	font-size:25px;
 }
+.container
+{
+	display:inline-flex;
+}
 .container-btn
 {
-	display:inline-block;
+	
 	width:75px;
 	height:30px;
 	background-color:#1959d1;
@@ -148,7 +152,17 @@ a.desc:after {
 	text-decoration:none;
 	padding-left:7px;
 }
-.container-btn-pos
+.container-tag
+{
+	width:auto;
+	heoght:30px;
+	background-color:gray;
+	padding-left:10px;
+	padding-right:10px;
+	
+}
+
+.container-pos
 {
 	position:relative;
 	top:55%;
@@ -156,6 +170,7 @@ a.desc:after {
 	margin-bottom:5px;
 	
 }
+
 .nav-btn
 {
 	background-color:inherit;

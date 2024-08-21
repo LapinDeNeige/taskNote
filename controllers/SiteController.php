@@ -16,6 +16,8 @@ use app\models\AddNote;
 use app\models\Auth;
 
 use app\models\SignupForm;
+use app\models\SignupUsers;
+
 class SiteController extends Controller
 {
     /**
@@ -88,20 +90,47 @@ class SiteController extends Controller
     }
 	public function actionSignup()
 	{
-		
+		if (!Yii::$app->user->isGuest) {
+            return $this->redirect('index');
+        }
 		
 		
 		$model=new SignupForm();
-		return $this->render('signup',['model'=>$model]);
+		if($model->load(Yii::$app->request->post()))
+		{
+			
+		}
+		//return $this->render('signup',['model'=>$model]);
 		
 		//if()
 		
+	}
+	public function actionRegister()
+	{
+		$name=$_POST['name'];
+		$pass=$_POST['password'];
+		if(isset($name) && isset($pass))
+		{
+			$resultName=SignupUsers::find($name)->where(['name'=>$name])->all();
+			if($resultName==null)
+			{
+				$newUser=new SignupUsers();
+				$newUser->name=$name;
+				$newUser->password=Yii::$app->getSecurity()->generatePasswordHash($pass);
+				
+				$newUser->save(false);
+				
+				//return $this->redirect('signup');
+			}
+		}
+		return $this->redirect('signup');
 	}
     /**
      * Login action.
      *
      * @return Response|string
      */
+	 /*
     public function actionLogin()
     {
         if (!Yii::$app->user->isGuest) {
@@ -118,7 +147,35 @@ class SiteController extends Controller
             'model' => $model,
         ]);
     }
-
+	*/
+	public function actionLogin()
+	{
+		if (!Yii::$app->user->isGuest) {
+            return $this->redirect('index');
+        }
+		
+		
+		if(isset($_POST['username']) &&isset($_POST['password']))
+		{
+			$user=$_POST['username'];
+			$pass=$_POST['password'];
+			
+			$resultAuth=SignupUsers::findOne($user)->all();
+			
+			if($resultAuth != null)
+			{
+				$hashedPass=$resultAuth->password;
+				
+				if(Yii::$app->getSecurity()->validatePassword($pass,$hashedPass))
+					return $this->redirect('index');
+			}
+			
+		}
+		return $this->redirect('signup');
+		
+	}
+	public function action
+	
     /**
      * Logout action.
      *
@@ -135,13 +192,14 @@ class SiteController extends Controller
   {
 		$desc=$_POST['description'];
 		$head=$_POST['header'];
+		$tag=$_POST['tag'];
 		
-		
-		if(isset($desc) && isset($head))
+		if(isset($desc) && isset($head) && isset($tag))
 		{
 			$noteDbItem=new NoteDb();
 			$noteDbItem->header=$head;
 			$noteDbItem->description=$desc;
+			$noteDbItem->tag=$tag;
 		
 			$noteDbItem->save();
 		}
