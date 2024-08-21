@@ -21,12 +21,12 @@ $this->params['breadcrumbs'][] = $this->title;
             <?php $form = ActiveForm::begin([
                 'id' => 'login-form',
 				'method'=>'post',
-				'action'=>['register'],
+				//'action'=>['Signup'],
             ]); ?>
 
-            <?= $form->field($model, 'name')->textInput(['autofocus' => true,'name'=>'name']) ?>
+            <?= $form->field($model, 'name')->textInput() ?>
 
-            <?= $form->field($model, 'password')->passwordInput(['name'=>'password']) ?>
+            <?= $form->field($model, 'password')->passwordInput() ?>
 			
 		
             <div class="form-group">

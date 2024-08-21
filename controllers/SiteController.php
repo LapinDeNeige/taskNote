@@ -74,17 +74,17 @@ class SiteController extends Controller
      *
      * @return string
      */
-    public function actionIndex()
+    public function actionIndex($id=null)
     {
-		if(Yii::$app->user->isGuest)
+		if(Yii::$app->user->isGuest ||$id==null)
 		{
-			return $this->redirect('site/login');
+			return $this->redirect('login');
 		}
 		else
 		{	
 			$notes=new AddNote();
+			$query=NoteDb::find()->where(['user_id'=>$id])->all();
 			
-			$query=NoteDb::find()->all();
 			return $this->render('index',['dbModel'=>$query,'addNotes'=>$notes]);
 		}
     }
@@ -96,41 +96,21 @@ class SiteController extends Controller
 		
 		
 		$model=new SignupForm();
-		if($model->load(Yii::$app->request->post()))
+		if($model->load(Yii::$app->request->post()) && $model->signup()) 
 		{
+			return $this->redirect('success');
+		}
+		//return $this->redirect('success');
+		return $this->render('signup',['model'=>$model]);
 			
-		}
-		//return $this->render('signup',['model'=>$model]);
-		
-		//if()
-		
 	}
-	public function actionRegister()
-	{
-		$name=$_POST['name'];
-		$pass=$_POST['password'];
-		if(isset($name) && isset($pass))
-		{
-			$resultName=SignupUsers::find($name)->where(['name'=>$name])->all();
-			if($resultName==null)
-			{
-				$newUser=new SignupUsers();
-				$newUser->name=$name;
-				$newUser->password=Yii::$app->getSecurity()->generatePasswordHash($pass);
-				
-				$newUser->save(false);
-				
-				//return $this->redirect('signup');
-			}
-		}
-		return $this->redirect('signup');
-	}
+	
     /**
      * Login action.
      *
      * @return Response|string
      */
-	 /*
+	 
     public function actionLogin()
     {
         if (!Yii::$app->user->isGuest) {
@@ -138,43 +118,29 @@ class SiteController extends Controller
         }
 
         $model = new LoginForm();
-        if ($model->load(Yii::$app->request->post()) && $model->login()) {			
-            return $this->redirect('index');
+		
+        if ($model->load(Yii::$app->request->post())) {
+				if($model->login())
+				{
+					$notes=new AddNote();
+					$query=NoteDb::find()->where(['user_id'=>$id])->all();
+					
+					return $this->redirect('index'); //$this->render
+				}
+				else
+				{
+					//if((null!=Yii::$app->request->post('username')) ||null!=Yii::$app->request->post('password'))
+					Yii::$app->session->setFlash('error','Incorrect password');
+					$model->password = '';
+				}
         }
-
-        $model->password = '';
-        return $this->render('login', [
-            'model' => $model,
-        ]);
+		return $this->render('login', ['model' => $model,]);
+		
+		
     }
-	*/
-	public function actionLogin()
-	{
-		if (!Yii::$app->user->isGuest) {
-            return $this->redirect('index');
-        }
-		
-		
-		if(isset($_POST['username']) &&isset($_POST['password']))
-		{
-			$user=$_POST['username'];
-			$pass=$_POST['password'];
-			
-			$resultAuth=SignupUsers::findOne($user)->all();
-			
-			if($resultAuth != null)
-			{
-				$hashedPass=$resultAuth->password;
-				
-				if(Yii::$app->getSecurity()->validatePassword($pass,$hashedPass))
-					return $this->redirect('index');
-			}
-			
-		}
-		return $this->redirect('signup');
-		
-	}
-	public function action
+	
+	
+	//public function action
 	
     /**
      * Logout action.
@@ -188,18 +154,20 @@ class SiteController extends Controller
         return $this->goHome();
     }
 
-  public function actionAdd()
+  public function actionAdd($id)
   {
-		$desc=$_POST['description'];
-		$head=$_POST['header'];
-		$tag=$_POST['tag'];
+		//$desc=$_POST['description'];
+		//$head=$_POST['header'];
+		//$tag=$_POST['tag'];
+		$model=new AddNote();
 		
-		if(isset($desc) && isset($head) && isset($tag))
+		if($model->load(Yii::$app->request->post()))
 		{
 			$noteDbItem=new NoteDb();
-			$noteDbItem->header=$head;
-			$noteDbItem->description=$desc;
-			$noteDbItem->tag=$tag;
+			$noteDbItem->header=$model->header;
+			$noteDbItem->description=$model->description;
+			$noteDbItem->tag=$model->tag;
+			$noteDbItem->user_id=$id;
 		
 			$noteDbItem->save();
 		}

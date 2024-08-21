@@ -3,6 +3,7 @@ namespace app\models;
 use Yii;
 use yii\base\model;
 
+//use yii\models\SignupUsers;
 class SignupForm extends Model
 {
 	public $name;
@@ -30,9 +31,22 @@ class SignupForm extends Model
             }
         }
     }
+	
 	public function signup()
 	{
+		$resultName=SignupUsers::find()->where(['name'=>$this->name])->all();
 		
+		if($resultName==null)
+		{
+			$newUser=new SignupUsers();
+			$newUser->name=$this->name;
+			$newUser->password=Yii::$app->getSecurity()->generatePasswordHash($this->password);
+			$newUser->save(false);
+				
+			return true;
+		}
+		
+		return false;
 		
 	}
 	

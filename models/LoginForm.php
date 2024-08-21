@@ -57,6 +57,7 @@ class LoginForm extends Model
      * Logs in a user using the provided username and password.
      * @return bool whether the user is logged in successfully
      */
+	 /*
     public function login()
     {
         if ($this->validate()) {
@@ -64,6 +65,21 @@ class LoginForm extends Model
         }
         return false;
     }
+	*/
+	public function login()
+	{
+		$resultAuth=SignupUsers::find()->where(['name'=>$this->username])->all();
+		
+		if($resultAuth != null)
+		{
+			$hashedPass=$resultAuth[0]->password;	
+			if(Yii::$app->getSecurity()->validatePassword($this->password,$hashedPass))
+				return true;
+			
+		}
+		
+		return false;
+	}
 
     /**
      * Finds user by [[username]]
