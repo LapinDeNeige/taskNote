@@ -7,6 +7,7 @@ use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\Response;
+use yii\web\Application;
 use yii\filters\VerbFilter;
 use app\models\LoginForm;
 
@@ -56,15 +57,12 @@ class SiteController extends Controller
             'error' => [
                 'class' => 'yii\web\ErrorAction',
             ],
-            'captcha' => [
-                'class' => 'yii\captcha\CaptchaAction',
-                'fixedVerifyCode' => YII_ENV_TEST ? 'testme' : null,
-            ],
 			'auth'=>[
 				'class'=>'yii\authclient\AuthAction',
 				'successCallback'=>[$this,'onAuthSuccess'],
 			
 			],
+			
         ];
     }
 	
@@ -74,16 +72,16 @@ class SiteController extends Controller
      *
      * @return string
      */
-    public function actionIndex($id=null)
+    public function actionIndex()
     {
-		if(Yii::$app->user->isGuest ||$id==null)
+		if(Yii::$app->user->isGuest )
 		{
 			return $this->redirect('login');
 		}
 		else
 		{	
 			$notes=new AddNote();
-			$query=NoteDb::find()->where(['user_id'=>$id])->all();
+			$query=NoteDb::find()->where(['user_id'=>0])->all();
 			
 			return $this->render('index',['dbModel'=>$query,'addNotes'=>$notes]);
 		}
@@ -96,9 +94,16 @@ class SiteController extends Controller
 		
 		
 		$model=new SignupForm();
-		if($model->load(Yii::$app->request->post()) && $model->signup()) 
+		if($model->load(Yii::$app->request->post())) 
 		{
-			return $this->redirect('success');
+			if($model->signup())
+			{
+				Yii::$app->session->setFlash('success','Your account has been created');
+				$this->redirect('login');
+			}
+			else
+				Yii::$app->session->setFlash('error','This account already exists');
+			
 		}
 		//return $this->redirect('success');
 		return $this->render('signup',['model'=>$model]);
@@ -122,10 +127,12 @@ class SiteController extends Controller
         if ($model->load(Yii::$app->request->post())) {
 				if($model->login())
 				{
-					$notes=new AddNote();
-					$query=NoteDb::find()->where(['user_id'=>$id])->all();
+					$query=NoteDb::find()->where(['user_id'=>$model->userId])->all();
+					$notesModel=new AddNote();
 					
-					return $this->redirect('index'); //$this->render
+					//Yii::$app->session->setFlash('success','Login sucessful');
+					$this->redirect(['index','dbModel'=>$query,'addNotes'=>$notesModel]);
+					//$this->render('index',['dbModel'=>$query,'addNotes'=>$notesModel]);
 				}
 				else
 				{
@@ -134,7 +141,7 @@ class SiteController extends Controller
 					$model->password = '';
 				}
         }
-		return $this->render('login', ['model' => $model,]);
+		return $this->render('login', ['model' => $model]);
 		
 		
     }
@@ -154,7 +161,7 @@ class SiteController extends Controller
         return $this->goHome();
     }
 
-  public function actionAdd($id)
+  public function actionAdd()
   {
 		//$desc=$_POST['description'];
 		//$head=$_POST['header'];
@@ -167,11 +174,14 @@ class SiteController extends Controller
 			$noteDbItem->header=$model->header;
 			$noteDbItem->description=$model->description;
 			$noteDbItem->tag=$model->tag;
-			$noteDbItem->user_id=$id;
+			$noteDbItem->user_id=Yii::$app->request('id');
 		
 			$noteDbItem->save();
+			
+			Yii::$app->session->setFlash('success','added sucessfully');
 		}
-		
+		else
+			Yii::$app->session->setFlash('error','error adding');
 		return $this->goHome();
   }
 	public function actionDelete($id)

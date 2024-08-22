@@ -43,7 +43,7 @@ class SignupForm extends Model
 			$newUser->password=Yii::$app->getSecurity()->generatePasswordHash($this->password);
 			$newUser->save(false);
 				
-			return true;
+			return $newUser;
 		}
 		
 		return false;

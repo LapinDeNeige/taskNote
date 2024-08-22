@@ -68,7 +68,7 @@ $this->registerJsFile(Yii::$app->request->baseUrl.'/js/script.js');
 		echo '</div>';
 		
 		echo '<div class="nav-item" style="margin-left:5%;" >';
-			echo '<span style="color:white">'. Yii::$app->user->identity->username.'</span>';
+			echo '<span style="color:white">'. Yii::$app->user->identity->name.'</span>';
 			
 		echo '</div>';
 		

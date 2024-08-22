@@ -16,6 +16,8 @@ function printTags($tags)
 		foreach($tagsArr as $tg)
 			echo Html::tag('div','#'.$tg,['class'=>'container-pos container-tag']);
 	}
+	
+	
 }
 
 
@@ -31,6 +33,8 @@ function printTags($tags)
 			
 			<div class='cnt'>
 			<?php
+			
+				$id=null;
 				if(count($dbModel)==0)
 					echo Html::tag('i','No active records',['style'=>'color:grey']);
 				
@@ -54,14 +58,16 @@ function printTags($tags)
 							echo '</div>';
 						echo '</div>'; 
 					}
+					$id=$d->user_id;
 				}
 				Modal::begin(['id'=>'modal-add','title'=>'Add new note']);
-					$form=ActiveForm::begin(['id'=>'form','method'=>'post','action'=>['add']]);
+					$form=ActiveForm::begin(['id'=>'form','method'=>'post','action'=>['/site/add']]);
 					
-						echo $form->field($addNotes,'header')->textInput(['style'=>'width:45%','maxlength'=>'50','name'=>'header']);
-						echo $form->field($addNotes,'tag')->textInput(['style'=>'width:45%','maxlength'=>'50','name'=>'tag']);
-						echo $form->field($addNotes,'description')->textarea(['style'=>'width:45%;height:60%;','maxlength'=>'150','name'=>'description']);
+						echo $form->field($addNotes,'header')->textInput(['style'=>'width:45%','maxlength'=>'50']);
+						echo $form->field($addNotes,'tag')->textInput(['style'=>'width:45%','maxlength'=>'50']);
+						echo $form->field($addNotes,'description')->textarea(['style'=>'width:45%;height:60%;','maxlength'=>'150']);
 						
+						echo $form->field($addNotes,'id')->hiddenInput(['value'=>$id])->label(true;
 						echo Html::submitButton('Add',['class'=>'btn','style'=>'background-color:blue;color:white;']);
 					ActiveForm::end();
 				Modal::end();

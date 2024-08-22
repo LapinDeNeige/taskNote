@@ -9,10 +9,13 @@ class AddNote extends Model
 	public $description;
 	public $header;
 	public $tag;
+	public $id;
+	
 	public function rules()
 	{
 		return [
 			[['description','header'],'required'],
+
 		];
 		
 	}

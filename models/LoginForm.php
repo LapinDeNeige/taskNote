@@ -4,7 +4,9 @@ namespace app\models;
 
 use Yii;
 use yii\base\Model;
-
+use yii\db\ActiveRecord;
+use yii\web\IdentityInterface;
+use yii\web\User;
 /**
  * LoginForm is the model behind the login form.
  *
@@ -17,6 +19,7 @@ class LoginForm extends Model
     public $password;
     public $rememberMe = true;
 
+	public $userId;
     private $_user = false;
 
 
@@ -68,13 +71,20 @@ class LoginForm extends Model
 	*/
 	public function login()
 	{
-		$resultAuth=SignupUsers::find()->where(['name'=>$this->username])->all();
-		
+		//$resultAuth=$this->getUser();
+		$resultAuth=SignupUsers::find()->where(['name'=>$this->username])->one();
 		if($resultAuth != null)
 		{
-			$hashedPass=$resultAuth[0]->password;	
+			$hashedPass=$resultAuth->password;	
+			
+			$this->userId=$resultAuth->id;
 			if(Yii::$app->getSecurity()->validatePassword($this->password,$hashedPass))
-				return true;
+			{
+				//Yii::$app->user->isGuest=false;
+				
+				return Yii::$app->user->login($this->getUser());
+				
+			}
 			
 		}
 		
@@ -86,12 +96,12 @@ class LoginForm extends Model
      *
      * @return User|null
      */
-    public function getUser()
+    public  function getUser()
     {
         if ($this->_user === false) {
-            $this->_user = User::findByUsername($this->username);
-        }
-
-        return $this->_user;
+			$this->_user=SignupUsers::find()->where(['name'=>$this->username])->one();
+		}
+		return $this->_user;
+          
     }
 }

@@ -21,11 +21,9 @@ $this->params['breadcrumbs'][] = $this->title;
             <?php $form = ActiveForm::begin([
                 'id' => 'login-form',
 				'method'=>'post',
-				//'action'=>['Signup'],
             ]); ?>
 
             <?= $form->field($model, 'name')->textInput() ?>
-
             <?= $form->field($model, 'password')->passwordInput() ?>
 			
 		
