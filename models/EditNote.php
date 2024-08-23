@@ -4,12 +4,12 @@ namespace app\models;
 use app\models;
 use yii\base\Model;
 
-class AddNote extends Model
+class EditNote extends Model
 {
-	public $description;
 	public $header;
 	public $tag;
-	
+	public $description;
+	public $id;
 	
 	public function rules()
 	{
@@ -20,7 +20,8 @@ class AddNote extends Model
 		
 	}
 	
-}
+	
+}	
 
 
 ?>

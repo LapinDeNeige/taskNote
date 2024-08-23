@@ -9,7 +9,8 @@ class SignupForm extends Model
 	public $name;
 	public $password;
 	
-	
+	public $_user;
+	public $userId;
 	public function rules()
 	{
 		return [
@@ -42,13 +43,33 @@ class SignupForm extends Model
 			$newUser->name=$this->name;
 			$newUser->password=Yii::$app->getSecurity()->generatePasswordHash($this->password);
 			$newUser->save(false);
-				
+			
+			$this->userId=$newUser->id;
+			
 			return $newUser;
 		}
 		
 		return false;
 		
 	}
+	public function login()
+	{
+		$resultUser=$this->getUser();
+		if($resultUser!=null)
+		{
+			return Yii::$app->user->login($resultUser);
+		}
+		return false;
+	}
+	public function getUser()
+	{
+		if($this->_user==false)
+			$this->_user=SignupUsers::find()->where(['name'=>$this->name])->one();
+		
+		return $this->_user;
+	}
+	
+	
 	
 }
 

@@ -48,6 +48,7 @@ $config = [
 	    'enableStrictParsing'=>false,
             'showScriptName' => true,
             'rules' => [
+		//'index'=>'site/index'
             ],
         ],
 		///

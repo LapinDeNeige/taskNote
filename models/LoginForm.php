@@ -104,4 +104,11 @@ class LoginForm extends Model
 		return $this->_user;
           
     }
+	public function getIdByUserName()
+	{
+		if(!$this->userId)
+			$this->userId=SignupUsers::findIdByUserName($this->user);
+		return $this->userId;
+	}
+
 }

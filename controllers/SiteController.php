@@ -7,13 +7,15 @@ use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\Response;
+use yii\web\Request;
 use yii\web\Application;
 use yii\filters\VerbFilter;
 use app\models\LoginForm;
-
+use yii\helpers\Url;
 
 use app\models\NoteDb;
 use app\models\AddNote;
+use app\models\EditNote;
 use app\models\Auth;
 
 use app\models\SignupForm;
@@ -72,7 +74,7 @@ class SiteController extends Controller
      *
      * @return string
      */
-    public function actionIndex()
+    public function actionIndex($id)
     {
 		if(Yii::$app->user->isGuest )
 		{
@@ -81,9 +83,14 @@ class SiteController extends Controller
 		else
 		{	
 			$notes=new AddNote();
-			$query=NoteDb::find()->where(['user_id'=>0])->all();
+			$editNotes=new EditNote();
 			
-			return $this->render('index',['dbModel'=>$query,'addNotes'=>$notes]);
+			$query=NoteDb::find()->where(['user_id'=>$id])->all();
+			//$url=Url::to(['']);
+			
+			return $this->render('index',['dbModel'=>$query,'addNotes'=>$notes,
+			'editNote'=>$editNotes,'id'=>$id]);
+			
 		}
     }
 	public function actionSignup()
@@ -98,8 +105,13 @@ class SiteController extends Controller
 		{
 			if($model->signup())
 			{
-				Yii::$app->session->setFlash('success','Your account has been created');
-				$this->redirect('login');
+				if($model->login())
+				{
+					$url=Url::toRoute(['index','id'=>$model->userId]);
+					$this->redirect($url);
+				}
+				//Yii::$app->session->setFlash('success','Your account has been created');
+				//$this->redirect('login');
 			}
 			else
 				Yii::$app->session->setFlash('error','This account already exists');
@@ -118,21 +130,21 @@ class SiteController extends Controller
 	 
     public function actionLogin()
     {
+		$model = new LoginForm();
+		$id=SignupUsers::findIdByUserName($model->username);
+		
+		$url=Url::toRoute(['index','id'=>$id]);
+		
         if (!Yii::$app->user->isGuest) {
-            return $this->redirect('index');
+			
+            return $this->redirect($url);
         }
-
-        $model = new LoginForm();
 		
         if ($model->load(Yii::$app->request->post())) {
 				if($model->login())
 				{
-					$query=NoteDb::find()->where(['user_id'=>$model->userId])->all();
-					$notesModel=new AddNote();
-					
+					$this->redirect($url);
 					//Yii::$app->session->setFlash('success','Login sucessful');
-					$this->redirect(['index','dbModel'=>$query,'addNotes'=>$notesModel]);
-					//$this->render('index',['dbModel'=>$query,'addNotes'=>$notesModel]);
 				}
 				else
 				{
@@ -158,23 +170,22 @@ class SiteController extends Controller
     {
         Yii::$app->user->logout();
 
-        return $this->goHome();
+        return $this->redirect('login');
     }
 
-  public function actionAdd()
+  public function actionAdd($id) //
   {
-		//$desc=$_POST['description'];
-		//$head=$_POST['header'];
-		//$tag=$_POST['tag'];
 		$model=new AddNote();
 		
 		if($model->load(Yii::$app->request->post()))
 		{
+			//$req=Yii::$app->request;
+			
 			$noteDbItem=new NoteDb();
 			$noteDbItem->header=$model->header;
 			$noteDbItem->description=$model->description;
 			$noteDbItem->tag=$model->tag;
-			$noteDbItem->user_id=Yii::$app->request('id');
+			$noteDbItem->user_id=$id;
 		
 			$noteDbItem->save();
 			
@@ -182,17 +193,21 @@ class SiteController extends Controller
 		}
 		else
 			Yii::$app->session->setFlash('error','error adding');
-		return $this->goHome();
+		
+		
+		$url=Url::toRoute('index',['id'=>'0']); //$id
+		return $this->redirect($url);
   }
 	public function actionDelete($id)
 	{
 		$noteDbItem=NoteDb::findOne($id);
 		$noteDbItem->delete();
 		
-		return $this->redirect('index');
+		$url=Url::toRoute('index',['id'=>$id]);
+		return $this->redirect($url);
 		
 	}
-	
+	/*
 	public function onAuthSuccess($client)
 	{
 		$attr=$client->getUserAttributes();
@@ -202,9 +217,7 @@ class SiteController extends Controller
 		'source_id'=>$attributes['id'],
 		])->one();
 		//if(Yii::$app->user->is)
-		
-		
-		
-		
 	}
+	*/
+	
 }

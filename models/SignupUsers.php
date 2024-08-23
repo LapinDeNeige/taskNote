@@ -60,6 +60,14 @@ class SignupUsers extends ActiveRecord implements IdentityInterface
 	{
 		throw new NotSupportedException('"findIdentityByAccessToken" is not implemented.');
 	}
+	public static  function findIdByUserName($username)
+	{
+		$result=static::find()->where(['name'=>$username])->one();
+		if($result)
+			return $result->id;
+			
+		
+	}
 	
 }
 

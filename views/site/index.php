@@ -21,6 +21,7 @@ function printTags($tags)
 }
 
 
+
 ?>
 
 <div class="site-index">
@@ -34,7 +35,7 @@ function printTags($tags)
 			<div class='cnt'>
 			<?php
 			
-				$id=null;
+				//$id=null;
 				if(count($dbModel)==0)
 					echo Html::tag('i','No active records',['style'=>'color:grey']);
 				
@@ -49,25 +50,38 @@ function printTags($tags)
 						echo '<div class="body-container">';
 							echo Html::tag('p',$d->description,['class'=>'body-inside container-txt container-txt-sz']);
 							
-							$url=Url::toRoute(['delete','id'=>$d->id]);
 							echo '<div class="container">';
-								echo Html::a('Remove',$url,['class'=>'container-btn container-pos']);
-								//
-								//echo Html::tag('div','#tag',['class'=>'container-pos container-tag']);
 								printTags($d->tag);
+								echo Html::a('Remove',Url::toRoute(['delete','id'=>$d->id]),['class'=>'container-btn container-pos']);
+								echo Html::tag('button','Edit',['class'=>'container-btn container-pos','id'=>'edit-id','onclick'=>'displayEditDialog()','name'=>$d->id]);
 							echo '</div>';
 						echo '</div>'; 
 					}
-					$id=$d->user_id;
+					//$id=$d->user_id;
 				}
+				
+				Modal::begin(['id'=>'modal-edit','title'=>'Edit post']);
+					$form=ActiveForm::begin(['id'=>'edit-form','method'=>'post','action'=>Url::toRoute(['add','id'=>$id])]);
+						echo $form->field($editNote,'header')->textInput(['style'=>'width:45%','maxlength'=>'50']);
+						echo $form->field($editNote,'description')->textInput(['style'=>'width:45%','maxlength'=>'50']);
+						echo $form->field($editNote,'tag')->textInput(['style'=>'width:45%','maxlength'=>'50']);
+						
+						echo $form->field($editNote,'id')->hiddenInput(['id'=>'hidden-id'])->label(false);
+						
+						echo Html::submitButton('Add',['class'=>'btn','style'=>'background-color:blue;color:white;']);
+					ActiveForm::end();
+				Modal::end();
+				
+				
+				
 				Modal::begin(['id'=>'modal-add','title'=>'Add new note']);
-					$form=ActiveForm::begin(['id'=>'form','method'=>'post','action'=>['/site/add']]);
+					$form=ActiveForm::begin(['id'=>'form','method'=>'post','action'=>Url::toRoute(['add','id'=>$id])]);
 					
 						echo $form->field($addNotes,'header')->textInput(['style'=>'width:45%','maxlength'=>'50']);
-						echo $form->field($addNotes,'tag')->textInput(['style'=>'width:45%','maxlength'=>'50']);
+						echo $form->field($addNotes,'tag')->textInput(['style'=>'width:45%','maxlength'=>'50'])->label('Tag. Add tags using ; delimiter');
 						echo $form->field($addNotes,'description')->textarea(['style'=>'width:45%;height:60%;','maxlength'=>'150']);
 						
-						echo $form->field($addNotes,'id')->hiddenInput(['value'=>$id])->label(true;
+						//echo $form->field($addNotes,'id')->hiddenInput(['value'=>$id])->label(true);
 						echo Html::submitButton('Add',['class'=>'btn','style'=>'background-color:blue;color:white;']);
 					ActiveForm::end();
 				Modal::end();

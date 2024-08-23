@@ -4,14 +4,10 @@ function displayDialog()
 	
 }
 
-function deleteItem(id)
+function displayEditDialog()
 {
-	$.ajax(
-	{
-		type:'POST',
-		url:'/controllers/deleteItem'
-		
-	}
+	var val=$(':focus').attr('name');
 	
-	)
+	$('#hidden-id').val(12)
+	$('#modal-edit').modal('show');
 }
