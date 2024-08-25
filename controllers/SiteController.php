@@ -20,6 +20,7 @@ use app\models\Auth;
 
 use app\models\SignupForm;
 use app\models\SignupUsers;
+use app\models\SearchNote;
 
 class SiteController extends Controller
 {
@@ -74,7 +75,7 @@ class SiteController extends Controller
      *
      * @return string
      */
-    public function actionIndex($id)
+    public function actionIndex()
     {
 		if(Yii::$app->user->isGuest )
 		{
@@ -84,12 +85,16 @@ class SiteController extends Controller
 		{	
 			$notes=new AddNote();
 			$editNotes=new EditNote();
+			//$searchNote=new SearchNote();
 			
+			$id=Yii::$app->session->get('id');
+			
+			
+			$model=new SearchNote();
 			$query=NoteDb::find()->where(['user_id'=>$id])->all();
-			//$url=Url::to(['']);
 			
-			return $this->render('index',['dbModel'=>$query,'addNotes'=>$notes,
-			'editNote'=>$editNotes,'id'=>$id]);
+			
+			return $this->render('index',['dbModel'=>$query,'addNotes'=>$notes,'editNote'=>$editNotes,'id'=>$id]);
 			
 		}
     }
@@ -105,11 +110,9 @@ class SiteController extends Controller
 		{
 			if($model->signup())
 			{
-				if($model->login())
-				{
-					$url=Url::toRoute(['index','id'=>$model->userId]);
-					$this->redirect($url);
-				}
+				if($model->login())		
+					$this->redirect('index');
+				
 				//Yii::$app->session->setFlash('success','Your account has been created');
 				//$this->redirect('login');
 			}
@@ -133,7 +136,7 @@ class SiteController extends Controller
 		$model = new LoginForm();
 		$id=SignupUsers::findIdByUserName($model->username);
 		
-		$url=Url::toRoute(['index','id'=>$id]);
+		//$url=Url::toRoute(['index','id'=>$id]);
 		
         if (!Yii::$app->user->isGuest) {
 			
@@ -142,13 +145,9 @@ class SiteController extends Controller
 		
         if ($model->load(Yii::$app->request->post())) {
 				if($model->login())
-				{
-					$this->redirect($url);
-					//Yii::$app->session->setFlash('success','Login sucessful');
-				}
+					$this->redirect('index');
 				else
 				{
-					//if((null!=Yii::$app->request->post('username')) ||null!=Yii::$app->request->post('password'))
 					Yii::$app->session->setFlash('error','Incorrect password');
 					$model->password = '';
 				}
@@ -159,7 +158,28 @@ class SiteController extends Controller
     }
 	
 	
-	//public function action
+	public function actionEdit($id)
+	{
+		if(Yii::$app->user->isGuest)
+			return $this->redirect('login');
+		
+		$editModel=new EditNote();
+		file_put_contents('test.txt',$id);
+		if($editModel->load(Yii::$app->request->post()))
+		{
+			//$id=Yii::$app->request->cookies->getValue('note-id');
+			
+			$noteDb=NoteDb::find()->where(['id'=>$id])->one();
+			if($noteDb!=null)
+			{
+				$noteDb->header=$editModel->header;
+				$noteDb->description=$editModel->description;
+				$noteDb->tag=$editModel->tag;
+				$noteDb->update();
+			}
+		}
+		return $this->redirect('index');
+	}
 	
     /**
      * Logout action.
@@ -194,17 +214,15 @@ class SiteController extends Controller
 		else
 			Yii::$app->session->setFlash('error','error adding');
 		
-		
-		$url=Url::toRoute('index',['id'=>'0']); //$id
-		return $this->redirect($url);
+		return $this->redirect('index');
   }
 	public function actionDelete($id)
 	{
 		$noteDbItem=NoteDb::findOne($id);
 		$noteDbItem->delete();
 		
-		$url=Url::toRoute('index',['id'=>$id]);
-		return $this->redirect($url);
+		
+		return $this->redirect('index');
 		
 	}
 	/*

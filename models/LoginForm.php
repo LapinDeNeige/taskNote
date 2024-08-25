@@ -80,8 +80,7 @@ class LoginForm extends Model
 			$this->userId=$resultAuth->id;
 			if(Yii::$app->getSecurity()->validatePassword($this->password,$hashedPass))
 			{
-				//Yii::$app->user->isGuest=false;
-				
+				Yii::$app->session->set('id',$this->userId);
 				return Yii::$app->user->login($this->getUser());
 				
 			}

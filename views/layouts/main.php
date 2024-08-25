@@ -10,6 +10,8 @@ use yii\bootstrap5\Breadcrumbs;
 use yii\bootstrap5\Html;
 use yii\bootstrap5\Nav;
 use yii\bootstrap5\NavBar;
+use yii\widgets\ActiveForm;
+use yii\helpers\Url;
 
 AppAsset::register($this);
 
@@ -52,7 +54,6 @@ $this->registerJsFile(Yii::$app->request->baseUrl.'/js/script.js');
         ]
     ]);
 			
-			//echo 'baba';
 	}
      else
 	 {	
@@ -62,14 +63,14 @@ $this->registerJsFile(Yii::$app->request->baseUrl.'/js/script.js');
 				['label' => 'Home', 'url' => ['/site/index']],
 			]]);
 			
+		
 		echo '<div class="nav-item" style="margin-left:65%;">';
-		echo Html::tag('button','Add new note +',['class'=>'nav-btn',
-			'onclick'=>'displayDialog()']);
+			echo Html::tag('button','Add new note +',['class'=>'nav-btn',
+				'onclick'=>'displayDialog()']);
 		echo '</div>';
 		
 		echo '<div class="nav-item" style="margin-left:5%;" >';
 			echo '<span style="color:white">'. Yii::$app->user->identity->name.'</span>';
-			
 		echo '</div>';
 		
 		

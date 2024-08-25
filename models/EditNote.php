@@ -9,7 +9,7 @@ class EditNote extends Model
 	public $header;
 	public $tag;
 	public $description;
-	public $id;
+	//public $id;
 	
 	public function rules()
 	{

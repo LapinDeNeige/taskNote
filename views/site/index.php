@@ -28,14 +28,8 @@ function printTags($tags)
     <div class="body-content">
 
         <div class="row">
-			<span>
-				<?=Html::tag('h1','Your notes',['style'=>'position:absolute;left:40%;']) ?>
-			</span>
-			
 			<div class='cnt'>
 			<?php
-			
-				//$id=null;
 				if(count($dbModel)==0)
 					echo Html::tag('i','No active records',['style'=>'color:grey']);
 				
@@ -44,29 +38,39 @@ function printTags($tags)
 					foreach($dbModel as $d)
 					{
 						echo '<div class="header-container">';
-						echo Html::tag('h1',$d->header,['class'=>'header-inside header-txt']);
+						echo Html::tag('h1',$d->header,['class'=>'header-inside header-txt','id'=>"header-".$d->id]);
 							
 						echo '</div>';
-						echo '<div class="body-container">';
+						echo '<div class="body-container" id="container-'.$d->id.'">';
 							echo Html::tag('p',$d->description,['class'=>'body-inside container-txt container-txt-sz']);
 							
-							echo '<div class="container">';
+							echo '<div class="container" >';
 								printTags($d->tag);
 								echo Html::a('Remove',Url::toRoute(['delete','id'=>$d->id]),['class'=>'container-btn container-pos']);
 								echo Html::tag('button','Edit',['class'=>'container-btn container-pos','id'=>'edit-id','onclick'=>'displayEditDialog()','name'=>$d->id]);
 							echo '</div>';
 						echo '</div>'; 
 					}
-					//$id=$d->user_id;
+					
 				}
 				
+				/*
+				$form=ActiveForm::begin(['id'=>'search-form','method'=>'post','action'=>Url::toRoute(['index'])]);
+					echo '<div style="display:inline-flex;position:relative;width:123px;">';
+						echo $form->field($searchModel,'searchTag')->textInput(['style'=>'width:123px;maxlength:50;height:32px;','placeholder'=>'Search note']);
+						echo Html::submitButton('Search',['class'=>'btn','style'=>'background-color:blue;color:white;margin:20px;height:37px;']);
+					echo '</div>';
+				ActiveForm::end();
+				*/
+				
+				
 				Modal::begin(['id'=>'modal-edit','title'=>'Edit post']);
-					$form=ActiveForm::begin(['id'=>'edit-form','method'=>'post','action'=>Url::toRoute(['add','id'=>$id])]);
-						echo $form->field($editNote,'header')->textInput(['style'=>'width:45%','maxlength'=>'50']);
-						echo $form->field($editNote,'description')->textInput(['style'=>'width:45%','maxlength'=>'50']);
-						echo $form->field($editNote,'tag')->textInput(['style'=>'width:45%','maxlength'=>'50']);
+					$form=ActiveForm::begin(['id'=>'edit-form','method'=>'post','action'=>Url::toRoute(['edit','id'=>Yii::$app->request->cookies->getValue('note-id')])]);
+						echo $form->field($editNote,'header')->textInput(['style'=>'width:45%','maxlength'=>'50','id'=>'edit-header']);
+						echo $form->field($editNote,'description')->textarea(['style'=>'width:45%;height:60%','maxlength'=>'50','id'=>'edit-desc']);
+						echo $form->field($editNote,'tag')->textInput(['style'=>'width:45%','maxlength'=>'50','id'=>'edit-tag']);
 						
-						echo $form->field($editNote,'id')->hiddenInput(['id'=>'hidden-id'])->label(false);
+						//echo $form->field($editNote,'id')->hiddenInput(['id'=>'hidden-id'])->label(false);
 						
 						echo Html::submitButton('Add',['class'=>'btn','style'=>'background-color:blue;color:white;']);
 					ActiveForm::end();

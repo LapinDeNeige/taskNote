@@ -4,10 +4,13 @@ function displayDialog()
 	
 }
 
+
+
+
 function displayEditDialog()
 {
-	var val=$(':focus').attr('name');
+	var note_id=$(':focus').attr('name');
+	document.cookie='note-id='+note_id;
 	
-	$('#hidden-id').val(12)
 	$('#modal-edit').modal('show');
 }
