@@ -37,7 +37,7 @@ function printTags($tags)
 				{
 					foreach($dbModel as $d)
 					{
-						echo '<div class="header-container">';
+						echo '<div class="header-container ">';
 						echo Html::tag('h1',$d->header,['class'=>'header-inside header-txt','id'=>"header-".$d->id]);
 							
 						echo '</div>';
@@ -54,14 +54,14 @@ function printTags($tags)
 					
 				}
 				
-				/*
-				$form=ActiveForm::begin(['id'=>'search-form','method'=>'post','action'=>Url::toRoute(['index'])]);
-					echo '<div style="display:inline-flex;position:relative;width:123px;">';
-						echo $form->field($searchModel,'searchTag')->textInput(['style'=>'width:123px;maxlength:50;height:32px;','placeholder'=>'Search note']);
+				
+				$form=ActiveForm::begin(['id'=>'search-form','method'=>'post','action'=>Url::toRoute(['search'])]);
+					echo '<div style="display:inline-flex;position:absolute;width:123px;left:55%;top:-10%;">';
+						echo $form->field($searchModel,'searchTag')->textInput(['style'=>'width:123px;maxlength:50;height:32px;','placeholder'=>'Search note','id'=>'search-txt']);
 						echo Html::submitButton('Search',['class'=>'btn','style'=>'background-color:blue;color:white;margin:20px;height:37px;']);
 					echo '</div>';
 				ActiveForm::end();
-				*/
+				
 				
 				
 				Modal::begin(['id'=>'modal-edit','title'=>'Edit post']);

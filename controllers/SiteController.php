@@ -78,26 +78,43 @@ class SiteController extends Controller
     public function actionIndex()
     {
 		if(Yii::$app->user->isGuest )
-		{
 			return $this->redirect('login');
+		
+		
+		$notes=new AddNote();
+		$editNotes=new EditNote();
+		$searchModel=new SearchNote();
+		
+		$id=Yii::$app->session->get('id');
+			
+		$query=NoteDb::find()->where(['user_id'=>$id])->all();
+		
+		return $this->render('index',['dbModel'=>$query,'addNotes'=>$notes,'editNote'=>$editNotes,'id'=>$id,'searchModel'=>$searchModel]);
+    }
+	
+	public function actionSearch()
+	{
+		if(Yii::$app->user->isGuest)
+			return $this->redirect('login');
+		
+		$model=new SearchNote();
+		if($model->load(Yii::$app->request->post(),''))
+		{
+			
+			//
+			file_put_contents('test.txt',$model->searchTag);
+			//
+			$id=Yii::$app->session->get('id');
+			$query=NoteDb::find()->where(['user_id'=>$id])->andWhere(['like','tag',$model->searchTag])->all();
+			$addNote=new AddNote();
+			$editNote=new EditNote();
+			$searchModel=new SearchNote();
+		
+			return $this->render('index',['dbModel'=>$query,'addNotes'=>$addNote,'editNote'=>$editNote,'id'=>$id,'searchModel'=>$searchModel]);
 		}
 		else
-		{	
-			$notes=new AddNote();
-			$editNotes=new EditNote();
-			//$searchNote=new SearchNote();
-			
-			$id=Yii::$app->session->get('id');
-			
-			
-			$model=new SearchNote();
-			$query=NoteDb::find()->where(['user_id'=>$id])->all();
-			
-			
-			return $this->render('index',['dbModel'=>$query,'addNotes'=>$notes,'editNote'=>$editNotes,'id'=>$id]);
-			
-		}
-    }
+			return $this->redirect('index');
+	}
 	public function actionSignup()
 	{
 		if (!Yii::$app->user->isGuest) {
@@ -164,7 +181,7 @@ class SiteController extends Controller
 			return $this->redirect('login');
 		
 		$editModel=new EditNote();
-		file_put_contents('test.txt',$id);
+		
 		if($editModel->load(Yii::$app->request->post()))
 		{
 			//$id=Yii::$app->request->cookies->getValue('note-id');

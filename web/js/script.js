@@ -14,3 +14,12 @@ function displayEditDialog()
 	
 	$('#modal-edit').modal('show');
 }
+
+/*
+function searchDialog()
+{
+	var search_txt=$('#search-txt').val();
+	document.cookie='search-txt='+search_txt;
+	
+}
+*/

@@ -15,7 +15,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1><?= Html::encode($this->title) ?></h1>
 	
     <div class="row">
-        <div class="col-lg-5">
+        <div class="container-login container-txt">
 
             <?php $form = ActiveForm::begin([
                 'id' => 'login-form',
