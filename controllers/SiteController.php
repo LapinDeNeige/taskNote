@@ -21,6 +21,8 @@ use app\models\Auth;
 use app\models\SignupForm;
 use app\models\SignupUsers;
 use app\models\SearchNote;
+//
+
 
 class SiteController extends Controller
 {
@@ -98,19 +100,27 @@ class SiteController extends Controller
 			return $this->redirect('login');
 		
 		$model=new SearchNote();
-		if($model->load(Yii::$app->request->post(),''))
-		{
-			
-			//
-			file_put_contents('test.txt',$model->searchTag);
-			//
+		
+		if($model->load(Yii::$app->request->get()))
+		{	
 			$id=Yii::$app->session->get('id');
-			$query=NoteDb::find()->where(['user_id'=>$id])->andWhere(['like','tag',$model->searchTag])->all();
+			$query=null;
+	
+			
+			if(empty($model->tag))
+				$query=NoteDb::find()->where(['user_id'=>$id])->all();
+			
+			else
+				$query=NoteDb::find()->where(['user_id'=>$id])->andWhere(['like','tag',$model->tag])->all();
+				
+			
+			
 			$addNote=new AddNote();
 			$editNote=new EditNote();
 			$searchModel=new SearchNote();
-		
+			
 			return $this->render('index',['dbModel'=>$query,'addNotes'=>$addNote,'editNote'=>$editNote,'id'=>$id,'searchModel'=>$searchModel]);
+			
 		}
 		else
 			return $this->redirect('index');
@@ -127,11 +137,12 @@ class SiteController extends Controller
 		{
 			if($model->signup())
 			{
-				if($model->login())		
-					$this->redirect('index');
+				//if($model->login())		
+				//{
+				Yii::$app->session->setFlash('success','Your account has been created');
+				$this->redirect('login');
+				//}
 				
-				//Yii::$app->session->setFlash('success','Your account has been created');
-				//$this->redirect('login');
 			}
 			else
 				Yii::$app->session->setFlash('error','This account already exists');
@@ -157,7 +168,7 @@ class SiteController extends Controller
 		
         if (!Yii::$app->user->isGuest) {
 			
-            return $this->redirect($url);
+            return $this->redirect('index');
         }
 		
         if ($model->load(Yii::$app->request->post())) {

@@ -29,26 +29,15 @@ class m240818_135249_db_users_vk extends Migration
     // Use up()/down() to run migration code without a transaction.
     public function up()
     {
-		$this->createTable('user', [
+		$this->createTable('users', [
             'id' => $this->primaryKey(),
-            'username' => $this->string()->notNull(),
-            'auth_key' => $this->string()->notNull(),
-            'password_hash' => $this->string()->notNull(),
-            'password_reset_token' => $this->string()->notNull(),
-            'email' => $this->string()->notNull(),
-            'status' => $this->smallInteger()->notNull()->defaultValue(10),
-            'created_at' => $this->integer()->notNull(),
-            'updated_at' => $this->integer()->notNull(),
-        ]);
-
-        $this->createTable('auth', [
-            'id' => $this->primaryKey(),
-            'user_id' => $this->integer()->notNull(),
-            'source' => $this->string()->notNull(),
-            'source_id' => $this->string()->notNull(),
+            'name' => $this->string()->notNull(),
+            'password' => $this->string()->notNull(),
+            'created_at' => $this->string()->notNull(),
+            'updated_at' => $this->string()->notNull(),
+            'auth_key' => $this->string()
         ]);
 		
-		$this->addForeignKey('fk-auth-user_id-user-id', 'auth', 'user_id', 'user', 'id', 'CASCADE', 'CASCADE');
 		
     }
 

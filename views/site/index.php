@@ -54,15 +54,16 @@ function printTags($tags)
 					
 				}
 				
+			
 				
-				$form=ActiveForm::begin(['id'=>'search-form','method'=>'post','action'=>Url::toRoute(['search'])]);
+				$formSearch=ActiveForm::begin(['id'=>'search-form','method'=>'get','action'=>Url::toRoute(['search'])]); //search
 					echo '<div style="display:inline-flex;position:absolute;width:123px;left:55%;top:-10%;">';
-						echo $form->field($searchModel,'searchTag')->textInput(['style'=>'width:123px;maxlength:50;height:32px;','placeholder'=>'Search note','id'=>'search-txt']);
-						echo Html::submitButton('Search',['class'=>'btn','style'=>'background-color:blue;color:white;margin:20px;height:37px;']);
+						echo $formSearch->field($searchModel,'tag')->textInput(['style'=>'width:123px;maxlength:50;height:32px;','placeholder'=>'Search note','id'=>'search-txt']); 
+						echo Html::submitButton('Search',['class'=>'btn','style'=>'background-color:blue;color:white;margin:20px;height:37px;']); 
 					echo '</div>';
 				ActiveForm::end();
 				
-				
+			
 				
 				Modal::begin(['id'=>'modal-edit','title'=>'Edit post']);
 					$form=ActiveForm::begin(['id'=>'edit-form','method'=>'post','action'=>Url::toRoute(['edit','id'=>Yii::$app->request->cookies->getValue('note-id')])]);
@@ -89,6 +90,7 @@ function printTags($tags)
 						echo Html::submitButton('Add',['class'=>'btn','style'=>'background-color:blue;color:white;']);
 					ActiveForm::end();
 				Modal::end();
+				
 			?>
 			</div>
         </div>

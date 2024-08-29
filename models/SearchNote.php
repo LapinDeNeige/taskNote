@@ -6,12 +6,12 @@ use yii\base\Model;
 
 class SearchNote extends Model
 {
-	public $searchTag;
+	public $tag;
 	public function rules()
 	{
 		return 
 		[
-			[['searchNote'],'required'],
+			[['tag'],'required'],
 		];
 	}
 

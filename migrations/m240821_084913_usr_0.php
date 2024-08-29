@@ -30,10 +30,11 @@ class m240821_084913_usr_0 extends Migration
     public function up()
     {
 		$this->createTable('usr_0',[
-		'header' => $this->string,
-		'description' => $this->string,
+		'header' => $this->string(),
+		'description' => $this->string(),
 		'id' => $this->primaryKey(),
-		'tag'=>$this->string,
+		'tag'=>$this->string(),
+		'user_id'=>$this->integer()->notNull(),
 		]);
     }
 
